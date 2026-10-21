@@ -1,3 +1,83 @@
-<ion-app>
-  <ion-router-outlet></ion-router-outlet>
-</ion-app>
+<ion-header [translucent]="true">
+  <ion-toolbar color="success">
+    <ion-title>Checklist</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="form-card ion-margin-bottom">
+    <ion-input
+      fill="outline"
+      color="success"
+      label="Nueva tarea"
+      label-placement="floating"
+      placeholder="Ingresa lo que quieras aquí..."
+      [(ngModel)]="newTodoTitle"
+      (keyup.enter)="addTodo()">
+    </ion-input>
+
+    <ion-textarea
+      fill="outline"
+      color="success"
+      label="Detalles (opcional)"
+      label-placement="floating"
+      placeholder="Notas adicionales o pasos a seguir..."
+      [(ngModel)]="newTodoDescription"
+      [autoGrow]="true"
+      rows="2">
+    </ion-textarea>
+
+    <ion-button expand="block" color="success" (click)="addTodo()">
+      <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+      Agregar Tarea
+    </ion-button>
+  </div>
+
+  <ion-list lines="full">
+    @for (todo of todos; track todo.id) {
+      <ion-item-sliding #slidingItem>
+        <ion-item>
+          <ion-checkbox
+            [(ngModel)]="todo.completed"
+            color="success"
+            justify="space-between"
+            [class.completed-item]="todo.completed">
+            {{ todo.title }}
+          </ion-checkbox>
+
+          <ion-button
+            fill="clear"
+            color="danger"
+            slot="end"
+            (click)="deleteTodo(todo.id)">
+            <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+          </ion-button>
+        </ion-item>
+
+        <ion-item-options side="end">
+          @if (!todo.completed) {
+            <ion-item-option color="success" (click)="markAsCompleted(todo.id, slidingItem)">
+              <ion-icon slot="icon-only" name="checkmark-outline"></ion-icon>
+            </ion-item-option>
+          }
+          <ion-item-option color="danger" (click)="deleteTodo(todo.id, slidingItem)">
+            <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+
+      @if (todo.description) {
+        <ion-accordion-group class="ion-margin-bottom">
+          <ion-accordion>
+            <ion-item slot="header" color="light">
+              <ion-label color="success">Detalles</ion-label>
+            </ion-item>
+            <div class="ion-padding details-box" slot="content">
+              <p>{{ todo.description }}</p>
+            </div>
+          </ion-accordion>
+        </ion-accordion-group>
+      }
+    }
+  </ion-list>
+</ion-content>
